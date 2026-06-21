@@ -1,0 +1,86 @@
+retail_analytics_queries.sql
+
+QUERY-1--Which product category sells most?
+
+SELECT category,SUM(sales) AS Total_sales 
+FROM orders
+GROUP BY category
+ORDER BY Total_sales DESC;
+
+Query-2--Which region has highest sales?
+
+SELECT region,
+       SUM(sales) as total_sales,
+       ROUND(SUM(profit),2) as total_profit
+from orders
+group by region
+order by total_sales DESC;
+
+Query-3--which customer segment generates most revenue?
+
+SELECT segment,
+       COUNT(DISTINCT order_id) AS TOTAL_ORDERS,
+       ROUND(SUM(sales)) AS TOTAL_SALES,
+       ROUND(SUM(profit)) AS TOTAL_PROFIT
+FROM orders
+GROUP BY segment
+ORDER BY TOTAL_SALES DESC;
+
+Query-4--which sub category has negative profits?
+
+SELECT sub_category,
+       ROUND(SUM(sales)) AS TOTAL_SALES,
+       ROUND(SUM(profit)) AS TOTAL_PROFIT
+FROM orders
+GROUP BY sub_category
+ORDER BY TOTAL_PROFIT ASC;
+
+Query-5--Which states have highest discont but lowest profits?
+
+SELECT state_province,
+       ROUND(AVG(discount),2) AS AVG_DISCOUNT,
+       ROUND(SUM(profit),2) AS TOTAL_PROFIT
+FROM orders
+GROUP BY state_province
+ORDER BY AVG_DISCOUNT DESC
+LIMIT 10;
+
+Query-6--TOP 10 CUSTOMERS BY SALES
+
+SELECT customer_name,
+       COUNT(DISTINCT order_id) AS Total_orders,
+       ROUND(SUM(sales),2) AS TOTAL_SALES,
+       ROUND(SUM(profit),2) AS TOTAL_PROFIT 
+FROM orders
+group by customer_name
+ORDER by TOTAL_SALES DESC
+LIMIT 10;
+
+Query-7-- MOST PREFERRED SHIPPING MODE
+
+SELECT ship_mode,
+       count(order_id) as total_orders,
+       SUM(sales) AS total_sales
+from orders
+group by ship_mode
+order by total_orders DESC;
+
+Query-8--AVG SALES BY SEGMENT
+
+select segment,
+       ROUND(SUM(sales)/COUNT(DISTINCT order_id),2) AS AVG_SALES_VALUE
+FROM orders
+GROUP BY segment
+ORDER BY AVG_SALES_VALUE DESC;
+
+Query-9--joining returns table with orders table
+
+SELECT o.Order_ID, 
+       o.Customer_Name,
+       o.Category,
+       o.Region,
+       ROUND(o.Sales, 2) AS Sales,
+       ROUND(o.Profit, 2) AS Profit,
+       r.Return_Status
+FROM orders o
+JOIN returns r ON o.Order_ID = r.Order_ID;
